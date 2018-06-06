@@ -13,6 +13,9 @@ Public Function SHIMOption(T As String, F As Double, K As Double, r As Double, s
         End If
 End Function
  
+ 
+ 
+ 
 Public Function SHIMImplied(T As String, F As Double, K As Double, r As Double, time As Double, option_price As Double)
     Dim max_iterations, i As Integer
     Dim accuracy, t_Sqrt As Double
@@ -47,6 +50,9 @@ Public Function SHIMImplied(T As String, F As Double, K As Double, r As Double, 
 End Function
  
  
+ 
+ 
+ 
 Public Function SHIMDelta(T As String, F As Double, K As Double, r As Double, sigma As Double, time As Double)
         Dim sigma_sqr, time_sqrt, d1, d2 As Double
         sigma_sqr = sigma * sigma
@@ -61,6 +67,9 @@ Public Function SHIMDelta(T As String, F As Double, K As Double, r As Double, si
         End If
 End Function
  
+ 
+ 
+ 
 Public Function SHIMVega(T As String, F As Double, K As Double, r As Double, sigma As Double, time As Double)
         Dim sigma_sqr, time_sqrt, d1, d2 As Double
         sigma_sqr = sigma * sigma
@@ -69,6 +78,10 @@ Public Function SHIMVega(T As String, F As Double, K As Double, r As Double, sig
         'SHIMVega = F * Exp(-r * time) * (WorksheetFunction.Norm_S_Dist(d1, True)) * time_sqrt
         SHIMVega = (F / 100) * Exp(-r * time) * time_sqrt * (1 / Sqr(2 * 3.14159)) * Exp(-(d1 ^ 2) / 2)
 End Function
+ 
+ 
+ 
+ 
  
 Public Function SHIMTheta(T As String, F As Double, K As Double, r As Double, sigma As Double, time As Double)
         Dim sigma_sqr, time_sqrt, d1, d2 As Double
