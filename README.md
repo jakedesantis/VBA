@@ -1,2 +1,2 @@
 # VBA
-Various VBA tools
+VBA functions for calculating option value, delta, vega, theta, and implied vol - based on Black model.
