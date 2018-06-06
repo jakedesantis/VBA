@@ -1,0 +1,82 @@
+Public Function SHIMOption(T As String, F As Double, K As Double, r As Double, sigma As Double, time As Double)
+        Dim sigma_sqr, time_sqrt, d1, d2 As Double
+        sigma_sqr = sigma * sigma
+        time_sqrt = Sqr(time)
+        d1 = (Log(F / K) + 0.5 * sigma_sqr * time) / (sigma * time_sqrt)
+        d2 = d1 - (sigma * time_sqrt)
+        If Left(T, 1) = "C" Then
+            SHIMOption = Exp(-r * time) * (F * WorksheetFunction.Norm_S_Dist(d1, True) - K * WorksheetFunction.Norm_S_Dist(d2, True))
+        ElseIf Left(T, 1) = "P" Then
+            SHIMOption = Exp(-r * time) * (K * WorksheetFunction.Norm_S_Dist(-d2, True) - F * WorksheetFunction.Norm_S_Dist(-d1, True))
+        Else
+            SHIMOption = "C or P!"
+        End If
+End Function
+ 
+Public Function SHIMImplied(T As String, F As Double, K As Double, r As Double, time As Double, option_price As Double)
+    Dim max_iterations, i As Integer
+    Dim accuracy, t_Sqrt As Double
+    Dim sigma As Double
+    t_Sqrt = Sqr(time)
+    sigma = (option_price / F) / (0.298 * t_Sqrt)
+    max_iterations = 1000
+    accuracy = 0.0001
+    i = 1
+    While i < max_iterations
+    Dim n As Double
+    Dim d1 As Double
+    Dim vega As Double
+        i = i + 1
+        Price = SHIMOption(T, F, K, r, sigma, time)
+        diff = (option_price - Price)
+        If Abs(diff) < accuracy Then
+            SHIMImplied = sigma
+        Else
+           d1 = (Log(F / K) + 0.5 * sigma * sigma * time) / (sigma * t_Sqrt)
+           n = (1 / Sqr(2 * 3.14159265358979)) * Exp(-0.5 * d1 * d1)
+           vega = F * Exp(-r * time) * n * t_Sqrt
+            If (vega > 100) Or vega < (1 / 10) Then
+                vega = F * Exp(-r * time) * 0.4 * t_Sqrt
+            End If
+            If vega = 0 Then
+                i = max_iterations
+            End If
+            sigma = sigma + diff / vega
+        End If
+    Wend
+End Function
+ 
+ 
+Public Function SHIMDelta(T As String, F As Double, K As Double, r As Double, sigma As Double, time As Double)
+        Dim sigma_sqr, time_sqrt, d1, d2 As Double
+        sigma_sqr = sigma * sigma
+        time_sqrt = Sqr(time)
+        d1 = (Log(F / K) + 0.5 * sigma_sqr * time) / (sigma * time_sqrt)
+        If Left(T, 1) = "C" Then
+            SHIMDelta = Exp(-r * time) * (WorksheetFunction.Norm_S_Dist(d1, True))
+        ElseIf Left(T, 1) = "P" Then
+            SHIMDelta = Exp(-r * time) * (WorksheetFunction.Norm_S_Dist(d1, True) - 1)
+        Else
+            SHIMDelta = "C or P!"
+        End If
+End Function
+ 
+Public Function SHIMVega(T As String, F As Double, K As Double, r As Double, sigma As Double, time As Double)
+        Dim sigma_sqr, time_sqrt, d1, d2 As Double
+        sigma_sqr = sigma * sigma
+        time_sqrt = Sqr(time)
+        d1 = (Log(F / K) + 0.5 * sigma_sqr * time) / (sigma * time_sqrt)
+        'SHIMVega = F * Exp(-r * time) * (WorksheetFunction.Norm_S_Dist(d1, True)) * time_sqrt
+        SHIMVega = (F / 100) * Exp(-r * time) * time_sqrt * (1 / Sqr(2 * 3.14159)) * Exp(-(d1 ^ 2) / 2)
+End Function
+ 
+Public Function SHIMTheta(T As String, F As Double, K As Double, r As Double, sigma As Double, time As Double)
+        Dim sigma_sqr, time_sqrt, d1, d2 As Double
+        sigma_sqr = sigma * sigma
+        time_sqrt = Sqr(time)
+        d1 = (Log(F / K) + 0.5 * sigma_sqr * time) / (sigma * time_sqrt)
+        SHIMTheta = -(1 / 365) * F * Exp(-r * time) * (sigma / (2 * Sqr(2 * 3.14159 * time))) * Exp(-(d1 ^ 2) / 2)
+        'SHIMTheta = -(1 / 365) * sigma * F * Exp(-r * time) * (1 / (2 * time_sqrt)) * WorksheetFunction.Norm_S_Dist(d1, False)  [[ALSO WORKS]]
+   
+        
+End Function
