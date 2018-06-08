@@ -13,9 +13,6 @@ Public Function SHIMOption(T As String, F As Double, K As Double, r As Double, s
         End If
 End Function
  
- 
- 
- 
 Public Function SHIMImplied(T As String, F As Double, K As Double, r As Double, time As Double, option_price As Double)
     Dim max_iterations, i As Integer
     Dim accuracy, t_Sqrt As Double
@@ -50,9 +47,6 @@ Public Function SHIMImplied(T As String, F As Double, K As Double, r As Double, 
 End Function
  
  
- 
- 
- 
 Public Function SHIMDelta(T As String, F As Double, K As Double, r As Double, sigma As Double, time As Double)
         Dim sigma_sqr, time_sqrt, d1, d2 As Double
         sigma_sqr = sigma * sigma
@@ -66,9 +60,32 @@ Public Function SHIMDelta(T As String, F As Double, K As Double, r As Double, si
             SHIMDelta = "C or P!"
         End If
 End Function
- 
- 
- 
+Public Function SHIMGamma(T As String, F As Double, K As Double, r As Double, sigma As Double, time As Double)
+        Dim sigma_sqr, time_sqrt, d1, d2 As Double
+        sigma_sqr = sigma * sigma
+        time_sqrt = Sqr(time)
+        d1 = (Log(F / K) + 0.5 * sigma_sqr * time) / (sigma * time_sqrt)
+        If Left(T, 1) = "C" Then
+            SHIMGamma = (Exp(-r * time) / (F * sigma * time_sqrt)) * (1 / Sqr(2 * 3.14159)) * Exp(-d1 * d1 / 2)
+        ElseIf Left(T, 1) = "P" Then
+            SHIMGamma = (Exp(-r * time) / (F * sigma * time_sqrt)) * (1 / Sqr(2 * 3.14159)) * Exp(-d1 * d1 / 2)
+        Else
+            SHIMGamma = "C or P!"
+        End If
+End Function
+Public Function SHIMGammaPct(T As String, F As Double, K As Double, r As Double, sigma As Double, time As Double)
+        Dim sigma_sqr, time_sqrt, d1, d2 As Double
+        sigma_sqr = sigma * sigma
+        time_sqrt = Sqr(time)
+        d1 = (Log(F / K) + 0.5 * sigma_sqr * time) / (sigma * time_sqrt)
+        If Left(T, 1) = "C" Then
+            SHIMGammaPct = (F / 100) * (Exp(-r * time) / (F * sigma * time_sqrt)) * (1 / Sqr(2 * 3.14159)) * Exp(-d1 * d1 / 2)
+        ElseIf Left(T, 1) = "P" Then
+            SHIMGammaPct = (F / 100) * (Exp(-r * time) / (F * sigma * time_sqrt)) * (1 / Sqr(2 * 3.14159)) * Exp(-d1 * d1 / 2)
+        Else
+            SHIMGammaPct = "C or P!"
+        End If
+End Function
  
 Public Function SHIMVega(T As String, F As Double, K As Double, r As Double, sigma As Double, time As Double)
         Dim sigma_sqr, time_sqrt, d1, d2 As Double
@@ -78,10 +95,6 @@ Public Function SHIMVega(T As String, F As Double, K As Double, r As Double, sig
         'SHIMVega = F * Exp(-r * time) * (WorksheetFunction.Norm_S_Dist(d1, True)) * time_sqrt
         SHIMVega = (F / 100) * Exp(-r * time) * time_sqrt * (1 / Sqr(2 * 3.14159)) * Exp(-(d1 ^ 2) / 2)
 End Function
- 
- 
- 
- 
  
 Public Function SHIMTheta(T As String, F As Double, K As Double, r As Double, sigma As Double, time As Double)
         Dim sigma_sqr, time_sqrt, d1, d2 As Double
@@ -93,3 +106,4 @@ Public Function SHIMTheta(T As String, F As Double, K As Double, r As Double, si
    
         
 End Function
+ 
